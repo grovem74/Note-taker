@@ -1,3 +1,2 @@
-Develop/node_modules/
-Develop/package-lock.json
-Develop/node_modules/
+node_modules/
+package-lock.json
