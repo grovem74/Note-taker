@@ -28,14 +28,13 @@ module.exports = function (app) {
   });
 
   app.delete("/api/notes/:id", function (req, res) {
-    var deletedNote = req.params.id -1;
+    var deletedNote = parseInt(req.params.id);
     fs.readFile(path.join(__dirname, "../db/db.json"), (err, res) => {
-      // let position = id - 1;
+
       let notes = JSON.parse(res);
       console.log("original notes: ", notes);
       console.log("Removed note: ", notes.splice(deletedNote, 1));
-      console.log("notes: ", notes);
-      console.log("deleted note ID: ", deletedNote + 1);
+      console.log("remaining notes: ", notes);
       fs.writeFile(path.join(__dirname, "../db/db.json"), JSON.stringify(notes), () => {
       });
     });
