@@ -1,5 +1,6 @@
-var path = require("fs");
+var fs = require("fs");
 var path = require("path");
+// var router = require("express").Router();
 
 // routes
 
@@ -9,20 +10,52 @@ module.exports = function (app) {
     res.sendFile(path.join(__dirname, "../db/db.json"));
   });
 
-  app.post("api/notes", function (req, res) {
-    var newNote = req.body;
-    var path = __dirname + "../db/db.json";
-    res.appendFile(path, JSON.stringify(newNote), function (err) {
-      if (err) throw err;
+  app.post("/api/notes", function (req, res) {
+    var newNote = req.query;
+    // console.log("new note: ", newNote);
+    // var path = __dirname + "../db/db.json";
+    // res.appendFile(path, JSON.stringify(newNote), function (err) {
+    //   if (err) throw err;
+    // });
+    // res.json({a: 1});
+    fs.readFile(path.join(__dirname, "../db/db.json"), (err, res) => {
+      let jsonArray = JSON.parse(res);
+      jsonArray.push(newNote);
+      fs.writeFile(path.join(__dirname, "../db/db.json"), JSON.stringify(jsonArray), () => {
+      });
     });
+    res.json();
   });
 
-  app.delete("*", function (req, res) {
-    res.sendFile(path.join(__dirname, "../public/index.html"));
+  app.delete("/api/notes/:id", function (req, res) {
+    var deletedNote = req.params.id -1;
+    fs.readFile(path.join(__dirname, "../db/db.json"), (err, res) => {
+      // let position = id - 1;
+      let notes = JSON.parse(res);
+      console.log("original notes: ", notes);
+      console.log("Removed note: ", notes.splice(deletedNote, 1));
+      console.log("notes: ", notes);
+      console.log("deleted note ID: ", deletedNote + 1);
+      fs.writeFile(path.join(__dirname, "../db/db.json"), JSON.stringify(notes), () => {
+      });
+    });
+    res.send("deleted note");
   });
 
+}
 
-};
 
+// router.get("/notes", (req, res) => {
+//   console.log(req);
+// });
+
+// router.post("/notes", (req, res) => {
+//   console.log(`------------req---------------`);
+//   console.log(req);
+//   res.json({a: 1});
+// });
+
+
+// module.exports= router;
 
 
